@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Зміна пароля — SocialNet (Локальний макет)</title>
+    <title>Зміна пароля — TikTok Style (Локальний макет)</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Proxima Nova', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
+            background-color: #000000;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,38 +23,42 @@
         }
 
         .card {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #121212;
+            border: 1px solid #2f2f2f;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
             width: 100%;
             max-width: 400px;
-            padding: 32px 24px;
+            padding: 36px 28px;
         }
 
         .logo {
             text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            color: #1877f2;
-            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            /* Фірмовий глітч-ефект тіні TikTok */
+            text-shadow: -2px -1px 0 #25F4EE, 2px 1px 0 #FE2C55;
         }
 
         .subtitle {
             text-align: center;
-            color: #606770;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             margin-bottom: 24px;
         }
 
         .demo-badge {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-            border-radius: 4px;
-            padding: 8px;
+            background-color: rgba(37, 244, 238, 0.1);
+            color: #25F4EE;
+            border: 1px solid rgba(37, 244, 238, 0.3);
+            border-radius: 6px;
+            padding: 10px;
             font-size: 12px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .form-group {
@@ -64,61 +69,73 @@
             display: block;
             font-size: 13px;
             font-weight: 600;
-            color: #1c1e21;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 6px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #dddfe2;
-            border-radius: 6px;
+            padding: 12px 14px;
+            background-color: #252525;
+            border: 1px solid #383838;
+            border-radius: 4px;
+            color: #ffffff;
             font-size: 15px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         input:focus {
-            border-color: #1877f2;
+            border-color: #25F4EE;
+            background-color: #2c2c2c;
         }
 
         button {
             width: 100%;
-            background-color: #1877f2;
+            background-color: #FE2C55;
             color: #ffffff;
             border: none;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 4px;
+            padding: 13px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 8px;
-            transition: background-color 0.2s;
+            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         button:hover {
-            background-color: #166fe5;
+            background-color: #ef2950;
+        }
+
+        button:active {
+            transform: scale(0.99);
         }
 
         .message {
-            margin-top: 16px;
+            margin-top: 18px;
             padding: 12px;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             display: none;
             text-align: center;
+            line-height: 1.4;
         }
 
         .message.error {
-            background-color: #ffebe8;
-            color: #d93025;
-            border: 1px solid #f5c2c7;
+            background-color: rgba(254, 44, 85, 0.15);
+            color: #ff6b86;
+            border: 1px solid rgba(254, 44, 85, 0.4);
         }
 
         .message.success {
-            background-color: #e6f4ea;
-            color: #137333;
-            border: 1px solid #ceead6;
+            background-color: rgba(37, 244, 238, 0.15);
+            color: #25F4EE;
+            border: 1px solid rgba(37, 244, 238, 0.4);
         }
     </style>
 </head>
@@ -134,8 +151,8 @@
 
         <form id="passwordForm">
             <div class="form-group">
-                <label for="username">Логін або електронна пошта</label>
-                <input type="text" id="username" placeholder="Введіть логін" required>
+                <label for="username">Ім'я користувача або пошта</label>
+                <input type="text" id="username" placeholder="@username" required>
             </div>
 
             <div class="form-group">
@@ -153,7 +170,7 @@
                 <input type="password" id="confirmPassword" placeholder="Повторіть новий пароль" required>
             </div>
 
-            <button type="submit">Зберегти новий пароль</button>
+            <button type="submit">Зберегти</button>
         </form>
 
         <div id="statusMessage" class="message"></div>
@@ -161,15 +178,13 @@
 
     <script>
         document.getElementById('passwordForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Зупиняємо стандартну відправку форми
+            event.preventDefault();
 
             const username = document.getElementById('username').value.trim();
             const currentPass = document.getElementById('currentPassword').value;
             const newPass = document.getElementById('newPassword').value;
             const confirmPass = document.getElementById('confirmPassword').value;
-            const statusMessage = document.getElementById('statusMessage');
 
-            // Базова клієнтська валідація
             if (newPass.length < 8) {
                 showMessage('Новий пароль має містити щонайменше 8 символів.', 'error');
                 return;
@@ -185,8 +200,7 @@
                 return;
             }
 
-            // Імітація успішної зміни (лише локально в пам'яті сторінки)
-            showMessage(`Пароль для користувача "${username}" успішно оновлено (локальна симуляція).`, 'success');
+            showMessage(`Пароль для акаунту "${username}" успішно оновлено (локальна симуляція).`, 'success');
             this.reset();
         });
 
