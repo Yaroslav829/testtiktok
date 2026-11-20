@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тестова версія: перевірка входу та сесії</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #111827;
+      color: #f9fafb;
+      margin: 0;
+      padding: 24px;
+    }
+    .box {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #1f2937;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+    }
+    h1 {
+      font-size: 1.25rem;
+      margin: 0 0 12px;
+    }
+    .mode-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .mode-bar button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+    .mode-bar button.active {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+      font-weight: 600;
+    }
+    .url {
+      font-family: monospace;
+      font-size: 0.85rem;
+      background: #111827;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      color: #93c5fd;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      color: #d1d5db;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #fff;
+    }
+    .submit {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px;
+      border: 0;
+      border-radius: 6px;
+      background: #10b981;
+      color: #06281e;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .out {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+      background: #030712;
+      font-family: monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      min-height: 70px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Тестова сторінка перевірки входу</h1>
+
+    <div class="mode-bar">
+      <button id="mNormal" class="active" onclick="setMode('normal')">Режим А: Прямий вхід</button>
+      <button id="mProxy" onclick="setMode('proxy')">Режим Б: Проксі-тест</button>
+    </div>
+
+    <div class="url" id="urlView">URL: https://test-auth.local/login</div>
+
+    <label for="u">Логін</label>
+    <input id="u" type="text" value="test_user" />
+
+    <label for="p">Пароль</label>
+    <input id="p" type="password" value="123456" />
+
+    <label for="c">Код 2FA</label>
+    <input id="c" type="text" value="654321" />
+
+    <button class="submit" onclick="runTest()">Запустити тест</button>
+
+    <div class="out" id="out">Натисніть «Запустити тест» для виводу результату.</div>
+  </div>
+
+  <script>
+    let mode = "normal";
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      document.getElementById("mNormal").classList.toggle("active", mode === "normal");
+      document.getElementById("mProxy").classList.toggle("active", mode === "proxy");
+      document.getElementById("urlView").textContent =
+        mode === "normal"
+          ? "URL: https://test-auth.local/login"
+          : "URL: https://test-auth-verify.local/login";
+      document.getElementById("out").textContent = "Обрано: " + (mode === "normal" ? "Прямий вхід" : "Проксі-тест");
+    }
+
+    function runTest() {
+      const user = document.getElementById("u").value;
+      const code = document.getElementById("c").value;
+      const token = "tok_" + Math.random().toString(36).slice(2, 10);
+
+      if (mode === "normal") {
+        document.getElementById("out").textContent =
+          `[OK] Прямий запит на test-auth.local\nКористувач: ${user}, 2FA: ${code}\nВидано тестовий токен: ${token}`;
+      } else {
+        document.getElementById("out").textContent =
+          `[PROXY] Запит пройшов через проміжний вузол test-auth-verify.local\nКористувач: ${user}, 2FA: ${code}\nПерехоплений тестовий токен сесії: ${token}`;
+      }
+    }
+  </script>
+</body>
+</html>
