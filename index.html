@@ -1,149 +1,202 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Тестова версія: перевірка входу та сесії</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #111827;
-      color: #f9fafb;
-      margin: 0;
-      padding: 24px;
-    }
-    .box {
-      max-width: 520px;
-      margin: 0 auto;
-      background: #1f2937;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #374151;
-    }
-    h1 {
-      font-size: 1.25rem;
-      margin: 0 0 12px;
-    }
-    .mode-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .mode-bar button {
-      flex: 1;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: #e5e7eb;
-      cursor: pointer;
-    }
-    .mode-bar button.active {
-      background: #2563eb;
-      border-color: #3b82f6;
-      color: #fff;
-      font-weight: 600;
-    }
-    .url {
-      font-family: monospace;
-      font-size: 0.85rem;
-      background: #111827;
-      padding: 8px 10px;
-      border-radius: 6px;
-      margin-bottom: 14px;
-      color: #93c5fd;
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      margin-top: 10px;
-      margin-bottom: 4px;
-      color: #d1d5db;
-    }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: #fff;
-    }
-    .submit {
-      width: 100%;
-      margin-top: 16px;
-      padding: 10px;
-      border: 0;
-      border-radius: 6px;
-      background: #10b981;
-      color: #06281e;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .out {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 6px;
-      background: #030712;
-      font-family: monospace;
-      font-size: 0.82rem;
-      white-space: pre-wrap;
-      min-height: 70px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зміна пароля — SocialNet (Локальний макет)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 32px 24px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1877f2;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #606770;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .demo-badge {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #1877f2;
+        }
+
+        button {
+            width: 100%;
+            background-color: #1877f2;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #166fe5;
+        }
+
+        .message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+        }
+
+        .message.error {
+            background-color: #ffebe8;
+            color: #d93025;
+            border: 1px solid #f5c2c7;
+        }
+
+        .message.success {
+            background-color: #e6f4ea;
+            color: #137333;
+            border: 1px solid #ceead6;
+        }
+    </style>
 </head>
 <body>
-  <div class="box">
-    <h1>Тестова сторінка перевірки входу</h1>
 
-    <div class="mode-bar">
-      <button id="mNormal" class="active" onclick="setMode('normal')">Режим А: Прямий вхід</button>
-      <button id="mProxy" onclick="setMode('proxy')">Режим Б: Проксі-тест</button>
+    <div class="card">
+        <div class="logo">SocialNet</div>
+        <p class="subtitle">Оновлення пароля облікового запису</p>
+        
+        <div class="demo-badge">
+            Локальний режим: дані нікуди не передаються
+        </div>
+
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="username">Логін або електронна пошта</label>
+                <input type="text" id="username" placeholder="Введіть логін" required>
+            </div>
+
+            <div class="form-group">
+                <label for="currentPassword">Поточний пароль</label>
+                <input type="password" id="currentPassword" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label for="newPassword">Новий пароль</label>
+                <input type="password" id="newPassword" placeholder="Мінімум 8 символів" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Підтвердіть новий пароль</label>
+                <input type="password" id="confirmPassword" placeholder="Повторіть новий пароль" required>
+            </div>
+
+            <button type="submit">Зберегти новий пароль</button>
+        </form>
+
+        <div id="statusMessage" class="message"></div>
     </div>
 
-    <div class="url" id="urlView">URL: https://test-auth.local/login</div>
+    <script>
+        document.getElementById('passwordForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Зупиняємо стандартну відправку форми
 
-    <label for="u">Логін</label>
-    <input id="u" type="text" value="test_user" />
+            const username = document.getElementById('username').value.trim();
+            const currentPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            const statusMessage = document.getElementById('statusMessage');
 
-    <label for="p">Пароль</label>
-    <input id="p" type="password" value="123456" />
+            // Базова клієнтська валідація
+            if (newPass.length < 8) {
+                showMessage('Новий пароль має містити щонайменше 8 символів.', 'error');
+                return;
+            }
 
-    <label for="c">Код 2FA</label>
-    <input id="c" type="text" value="654321" />
+            if (newPass !== confirmPass) {
+                showMessage('Новий пароль та підтвердження не збігаються.', 'error');
+                return;
+            }
 
-    <button class="submit" onclick="runTest()">Запустити тест</button>
+            if (currentPass === newPass) {
+                showMessage('Новий пароль повинен відрізнятися від поточного.', 'error');
+                return;
+            }
 
-    <div class="out" id="out">Натисніть «Запустити тест» для виводу результату.</div>
-  </div>
+            // Імітація успішної зміни (лише локально в пам'яті сторінки)
+            showMessage(`Пароль для користувача "${username}" успішно оновлено (локальна симуляція).`, 'success');
+            this.reset();
+        });
 
-  <script>
-    let mode = "normal";
+        function showMessage(text, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = text;
+            statusMessage.className = 'message ' + type;
+            statusMessage.style.display = 'block';
+        }
+    </script>
 
-    function setMode(nextMode) {
-      mode = nextMode;
-      document.getElementById("mNormal").classList.toggle("active", mode === "normal");
-      document.getElementById("mProxy").classList.toggle("active", mode === "proxy");
-      document.getElementById("urlView").textContent =
-        mode === "normal"
-          ? "URL: https://test-auth.local/login"
-          : "URL: https://test-auth-verify.local/login";
-      document.getElementById("out").textContent = "Обрано: " + (mode === "normal" ? "Прямий вхід" : "Проксі-тест");
-    }
-
-    function runTest() {
-      const user = document.getElementById("u").value;
-      const code = document.getElementById("c").value;
-      const token = "tok_" + Math.random().toString(36).slice(2, 10);
-
-      if (mode === "normal") {
-        document.getElementById("out").textContent =
-          `[OK] Прямий запит на test-auth.local\nКористувач: ${user}, 2FA: ${code}\nВидано тестовий токен: ${token}`;
-      } else {
-        document.getElementById("out").textContent =
-          `[PROXY] Запит пройшов через проміжний вузол test-auth-verify.local\nКористувач: ${user}, 2FA: ${code}\nПерехоплений тестовий токен сесії: ${token}`;
-      }
-    }
-  </script>
 </body>
 </html>
